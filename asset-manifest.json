@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/avia-search/static/css/main.1f440023.css",
-    "main.js": "/avia-search/static/js/main.e899dc10.js",
+    "main.js": "/avia-search/static/js/main.0ebcc24d.js",
     "static/js/453.8e0f7574.chunk.js": "/avia-search/static/js/453.8e0f7574.chunk.js",
     "static/media/free-icon-time-3239945.png": "/avia-search/static/media/free-icon-time-3239945.e6a08002a96e87bece30.png",
     "index.html": "/avia-search/index.html",
     "main.1f440023.css.map": "/avia-search/static/css/main.1f440023.css.map",
-    "main.e899dc10.js.map": "/avia-search/static/js/main.e899dc10.js.map",
+    "main.0ebcc24d.js.map": "/avia-search/static/js/main.0ebcc24d.js.map",
     "453.8e0f7574.chunk.js.map": "/avia-search/static/js/453.8e0f7574.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1f440023.css",
-    "static/js/main.e899dc10.js"
+    "static/js/main.0ebcc24d.js"
   ]
 }
