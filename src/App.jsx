@@ -30,12 +30,18 @@ function App() {
     });
   });
 
+  console.log(bla);
+  console.log(bla2);
+
   const [sortPriceIncrease, setSortPriceIncrease] = useState(false);
   const [sortPriceReduction, setSortPriceReduction] = useState(false);
   const [duration, setDuration] = useState(false);
   const [oneTransfer, setOneTransfer] = useState(false);
   const [noTransfers, setNoTransfers] = useState(false);
+  const [priceFrom, setPriceFrom] = useState(0);
+  const [priceTo, setPriceTo] = useState(1000000);
   const [initial, setInitial] = useState(bla2);
+  const [air, setAir] = useState(bla2);
 
   useEffect(() => {
     localStorage.removeItem("airline");
@@ -47,6 +53,8 @@ function App() {
     localStorage.setItem("Duration", duration);
     localStorage.setItem("OneTransfer", oneTransfer);
     localStorage.setItem("NoTransfers", noTransfers);
+    localStorage.setItem("priceFrom", priceFrom);
+    localStorage.setItem("priceTo", priceTo);
     if (JSON.parse(localStorage.getItem("airline")) === null) {
       localStorage.setItem("airline", JSON.stringify([]));
     }
@@ -119,14 +127,28 @@ function App() {
 
   const filter = () => {
     const airline = JSON.parse(localStorage.getItem("airline"));
-    const filterArray = [];
+    const priceFrom = localStorage.getItem("priceFrom");
+    const priceTo = localStorage.getItem("priceTo");
+
     const initialArray = bla2;
+    const filterArrayByPrice = [];
+    const filterArray = [];
+
+    initialArray.forEach((e) => {
+      if (
+        e.flight.price.total.amount > +priceFrom &&
+        e.flight.price.total.amount < +priceTo
+      ) {
+        filterArrayByPrice.push(e);
+      }
+    });
 
     if (airline.length === 0) {
-      setInitial(filterByTransfers(initialArray));
+      setInitial(filterByTransfers(filterArrayByPrice));
+      setAir(filterByTransfers(filterArrayByPrice));
     }
     if (airline.length > 0) {
-      initialArray.forEach((i) => {
+      filterArrayByPrice.forEach((i) => {
         airline.forEach((e) => {
           if (i.flight.carrier.caption.includes(e)) {
             filterArray.push(i);
@@ -136,6 +158,65 @@ function App() {
       setInitial(filterByTransfers(filterArray));
     }
   };
+
+  function filterAirlanes(array) {
+    const initialAirlines = [];
+    const test = [];
+    const test2 = [];
+
+    [...new Set(array.map((i) => i.flight.carrier.caption))].forEach((i) => {
+      let maxPrice = 1000000;
+      array.forEach((e) => {
+        if (e.flight.carrier.caption === i) {
+          if (+e.flight.price.total.amount < maxPrice) {
+            maxPrice = e.flight.price.total.amount;
+          }
+        }
+      });
+      initialAirlines.push({ airline: i, maxPrice: maxPrice, disabled: false });
+    });
+
+    [...new Set(air.map((i) => i.flight.carrier.caption))].forEach((i) => {
+      let maxPrice = 1000000;
+      air.forEach((e) => {
+        if (e.flight.carrier.caption === i) {
+          if (+e.flight.price.total.amount < maxPrice) {
+            maxPrice = e.flight.price.total.amount;
+          }
+        }
+      });
+      test.push({ airline: i, maxPrice: maxPrice, disabled: false });
+    });
+
+    initialAirlines.forEach((e) => {
+      test.forEach((j) => {
+        if (e.airline === j.airline) {
+          if (e.maxPrice === j.maxPrice) {
+            test2.push({
+              airline: j.airline,
+              maxPrice: j.maxPrice,
+              disabled: false,
+            });
+          } else if (e.maxPrice !== j.maxPrice)
+            test2.push({
+              airline: j.airline,
+              maxPrice: j.maxPrice,
+              disabled: false,
+            });
+        }
+      });
+      return test2.push({
+        airline: e.airline,
+        maxPrice: e.maxPrice,
+        disabled: true,
+      });
+    });
+
+    for (let i = 0; i < test2.length; i++) {
+      if (test2[i].airline === test2[i + 1]?.airline) test2.splice([i + 1], 1);
+    }
+    return test2;
+  }
 
   return (
     <div className="App">
@@ -223,20 +304,48 @@ function App() {
           </div>
         </div>
         <div className="sort">
+          <p className="text">Цена</p>
+          <div>
+            От{" "}
+            <input
+              name="priceFrom"
+              value={priceFrom}
+              onChange={(e) => {
+                setPriceFrom(e.target.value);
+                localStorage.setItem("priceFrom", e.target.value);
+                filter();
+              }}
+            ></input>
+          </div>
+          <div>
+            До{" "}
+            <input
+              name="priceTo"
+              value={priceTo}
+              onChange={(e) => {
+                setPriceTo(e.target.value);
+                localStorage.setItem("priceTo", e.target.value);
+                filter();
+              }}
+            ></input>
+          </div>
+        </div>
+        <div className="sort">
           <p className="text">Авиакомпании</p>
-          {[...new Set(bla2.map((i) => i.flight.carrier.caption))].map(
-            (i, index) => (
-              <div className="sort_container" key={index}>
-                <input
-                  id={index}
-                  type="checkbox"
-                  value={i}
-                  onClick={(e) => filterAirlane(e)}
-                />
-                <label> - {i}</label>
-              </div>
-            )
-          )}
+          {filterAirlanes(bla2).map((i, index) => (
+            <div className="sort_container" key={index}>
+              <input
+                id={index}
+                type="checkbox"
+                value={i.airline}
+                onClick={(e) => filterAirlane(e)}
+                disabled={i.disabled}
+              />
+              <label>
+                - {i.airline} от {i.maxPrice}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -251,7 +360,6 @@ function App() {
           <p>По вашему запросу ничего не найдено</p>
         )}
       </div>
-      {/* <FlightСard item={bla2[66]} /> */}
     </div>
   );
 }
