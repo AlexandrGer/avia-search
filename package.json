@@ -1,5 +1,6 @@
 {
   "name": "avia-search",
+  "homepage": "https://alexandrger.github.io/avia-search/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
