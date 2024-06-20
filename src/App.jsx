@@ -11,6 +11,8 @@ function App() {
   const [noTransfers, setNoTransfers] = useState(false);
   const [priceFrom, setPriceFrom] = useState(0);
   const [priceTo, setPriceTo] = useState(1000000);
+  const [count, setCount] = useState(5);
+  const moreCount = 5;
 
   useEffect(() => {
     localStorage.removeItem("airline");
@@ -56,6 +58,17 @@ function App() {
 
   const [initial, setInitial] = useState(arrivalArray);
   const [air, setAir] = useState(arrivalArray);
+  const [visible, setVisible] = useState([]);
+
+  useEffect(() => {
+    setVisible(initial.slice(0, count));
+  }, [count, initial]);
+
+  function handleMoreClick() {
+    const newArray = [...initial.slice(0, count + moreCount)];
+    setCount(count + moreCount);
+    setVisible(newArray);
+  }
 
   // Функция фильтрации по авиакомпаниям
   function filterAirlane(e) {
@@ -154,8 +167,9 @@ function App() {
       });
       setInitial(filterByTransfers(filterArray));
     }
+    setCount(5);
   };
-
+  console.log(count);
   function filterAirlanes(array) {
     const initialAirlines = [];
     const test = [];
@@ -347,14 +361,21 @@ function App() {
         </div>
 
         <div className="flight_container">
-          {initial.length > 0 ? (
+          {visible.length > 0 ? (
             <>
-              {initial.map((item, index) => (
+              {visible.map((item, index) => (
                 <FlightСard key={index} item={item} />
               ))}
             </>
           ) : (
             <p>По вашему запросу ничего не найдено</p>
+          )}
+          {visible.length === initial.length ? (
+            ""
+          ) : (
+            <button className="button_showMore" onClick={handleMoreClick}>
+              Показать еще
+            </button>
           )}
         </div>
       </div>

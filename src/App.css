@@ -51,3 +51,9 @@
 .airline_price {
   align-self: flex-end;
 }
+
+.button_showMore {
+  width: 170px;
+  align-self: center;
+  margin-top: -20px;
+}
