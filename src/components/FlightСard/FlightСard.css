@@ -1,0 +1,155 @@
+.FlightСard {
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+  margin: auto;
+  margin-top: 40px;
+}
+
+.FlightСard_header {
+  box-sizing: border-box;
+  padding: 0 15px;
+  background: #0a69bfd9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 700;
+  font-size: 21px;
+  color: white;
+}
+
+.price_caption {
+  font-size: 10px;
+}
+
+.flight {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  gap: 16px;
+}
+
+.destination {
+  display: flex;
+  /* gap: 10px; */
+}
+
+.city {
+  font-weight: normal;
+  font-size: 18px;
+}
+
+.city_caption {
+  color: #0a69bfd9;
+  margin-left: 5px;
+  font-weight: 450;
+}
+
+.arrow {
+  background: url("../../../public/free-icon-right-arrow-3550091.png") no-repeat
+    center;
+  background-size: 15px 15px;
+  width: 30px;
+  height: 24px;
+}
+
+.flight_info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.flight_infoContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time {
+  font-weight: normal;
+  font-size: 21px;
+}
+
+.time_second {
+  margin-right: 20px;
+}
+
+.day {
+  font-size: 17px;
+  margin-left: 5px;
+}
+
+.duration {
+  display: flex;
+  font-size: 19px;
+  margin-left: 23px;
+  margin-top: 5px;
+}
+
+.duration_icon {
+  background: url("../../../public/free-icon-time-3239945.png") no-repeat center;
+  background-size: 15px 15px;
+  width: 22px;
+  height: 24px;
+}
+
+.transfer {
+  font-size: 16px;
+  color: orange;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.transfer::before {
+  content: "";
+  width: 35%;
+  height: 1px;
+  background-color: #828288;
+}
+
+.transfer::after {
+  content: "";
+  width: 35%;
+  height: 1px;
+  background-color: #828288;
+}
+
+.flight_company {
+  padding: 0;
+  margin: 0;
+  margin-right: auto;
+  font-size: 16px;
+  margin-top: -5px;
+}
+
+.flight_company_name {
+  margin-left: 10px;
+  font-weight: 450;
+}
+
+.line {
+  width: 100%;
+  height: 3px;
+  background-color: #0a69bfd9;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  background: #ffa500a8;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #ffa500;
+}
