@@ -169,7 +169,7 @@ function App() {
     }
     setCount(5);
   };
-  console.log(count);
+
   function filterAirlanes(array) {
     const initialAirlines = [];
     const test = [];
