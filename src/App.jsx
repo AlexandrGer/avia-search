@@ -30,11 +30,16 @@ function App() {
     });
   });
 
-  const [sortPriceIncrease, setSortPriceIncrease] = useState(false); // Сортировка по возрастанию цены
-  const [sortPriceReduction, setSortPriceReduction] = useState(false); // Сортировка по убыванию цены
-  const [duration, setDuration] = useState(false); // Сортировка по времени в пути
+  const [sortPriceIncrease, setSortPriceIncrease] = useState(false);
+  const [sortPriceReduction, setSortPriceReduction] = useState(false);
+  const [duration, setDuration] = useState(false);
   const [oneTransfer, setOneTransfer] = useState(false);
   const [noTransfers, setNoTransfers] = useState(false);
+  const [initial, setInitial] = useState(bla2);
+
+  useEffect(() => {
+    localStorage.removeItem("airline");
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("PriceIncrease", sortPriceIncrease);
@@ -47,9 +52,8 @@ function App() {
     }
   });
 
-  const [initial, setInitial] = useState(bla2);
-
-  const filterAirlane = (e) => {
+  // Функция фильтрации по авиакомпаниям
+  function filterAirlane(e) {
     const airline = JSON.parse(localStorage.getItem("airline"));
     const input = e.target;
     if (airline.includes(input.value) && input.checked === false) {
@@ -62,9 +66,10 @@ function App() {
       airline.push(input.value);
       localStorage.setItem("airline", JSON.stringify(airline));
     }
-    return airline;
-  };
+    filter();
+  }
 
+  // Функция сортировки
   function sort(array) {
     const PriceIncrease = JSON.parse(localStorage.getItem("PriceIncrease"));
     const PriceReduction = JSON.parse(localStorage.getItem("PriceReduction"));
@@ -88,37 +93,49 @@ function App() {
     return array;
   }
 
-  const filter = () => {
-    // const t = JSON.parse(localStorage.getItem("airline"));
-    // console.log(t);
+  // Функция фильтрации по пересадкам
+  function filterByTransfers(array) {
     const OneTransfer = JSON.parse(localStorage.getItem("OneTransfer"));
     const NoTransfers = JSON.parse(localStorage.getItem("NoTransfers"));
-    const array1 = bla2;
-
     if (OneTransfer === false && NoTransfers === false) {
-      setInitial(sort(array1));
+      return sort(array);
     }
     if (OneTransfer === true && NoTransfers === false) {
-      setInitial(
-        sort(array1).filter(
-          (item) =>
-            item.flight.legs[0].segments.length > 1 &&
-            item.flight.legs[1].segments.length > 1
-        )
+      return sort(array).filter(
+        (item) =>
+          item.flight.legs[0].segments.length > 1 &&
+          item.flight.legs[1].segments.length > 1
       );
     }
     if (OneTransfer === false && NoTransfers === true) {
-      setInitial(
-        sort(array1).filter(
-          (item) =>
-            item.flight.legs[0].segments.length === 1 &&
-            item.flight.legs[1].segments.length === 1
-        )
+      return sort(array).filter(
+        (item) =>
+          item.flight.legs[0].segments.length === 1 &&
+          item.flight.legs[1].segments.length === 1
       );
     }
-  };
+    return array;
+  }
 
-  //   console.log(initial);
+  const filter = () => {
+    const airline = JSON.parse(localStorage.getItem("airline"));
+    const filterArray = [];
+    const initialArray = bla2;
+
+    if (airline.length === 0) {
+      setInitial(filterByTransfers(initialArray));
+    }
+    if (airline.length > 0) {
+      initialArray.forEach((i) => {
+        airline.forEach((e) => {
+          if (i.flight.carrier.caption.includes(e)) {
+            filterArray.push(i);
+          }
+        });
+      });
+      setInitial(filterByTransfers(filterArray));
+    }
+  };
 
   return (
     <div className="App">
@@ -213,7 +230,6 @@ function App() {
                 <input
                   id={index}
                   type="checkbox"
-                  //   defaultChecked={false}
                   value={i}
                   onClick={(e) => filterAirlane(e)}
                 />
@@ -225,9 +241,15 @@ function App() {
       </div>
 
       <div>
-        {initial.map((item, index) => (
-          <FlightСard key={index} item={item} />
-        ))}
+        {initial.length > 0 ? (
+          <>
+            {initial.map((item, index) => (
+              <FlightСard key={index} item={item} />
+            ))}
+          </>
+        ) : (
+          <p>По вашему запросу ничего не найдено</p>
+        )}
       </div>
       {/* <FlightСard item={bla2[66]} /> */}
     </div>
