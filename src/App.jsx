@@ -4,35 +4,6 @@ import { data } from "./flights";
 import FlightСard from "./components/FlightСard/FlightСard";
 
 function App() {
-  const bla = [];
-  const bla2 = [];
-
-  const departureCity = "Москва";
-  const arrivalCity = "ЛОНДОН";
-
-  data.result.flights.map((item) => {
-    return item.flight.legs.map((i) => {
-      return i.segments.map((j) => {
-        if (j.departureCity && j.departureCity.caption === departureCity)
-          bla.push(item);
-        return j;
-      });
-    });
-  });
-
-  bla.map((item) => {
-    return item.flight.legs.map((i) => {
-      return i.segments.map((j) => {
-        if (j.arrivalCity && j.arrivalCity.caption === arrivalCity)
-          bla2.push(item);
-        return j;
-      });
-    });
-  });
-
-  console.log(bla);
-  console.log(bla2);
-
   const [sortPriceIncrease, setSortPriceIncrease] = useState(false);
   const [sortPriceReduction, setSortPriceReduction] = useState(false);
   const [duration, setDuration] = useState(false);
@@ -40,8 +11,6 @@ function App() {
   const [noTransfers, setNoTransfers] = useState(false);
   const [priceFrom, setPriceFrom] = useState(0);
   const [priceTo, setPriceTo] = useState(1000000);
-  const [initial, setInitial] = useState(bla2);
-  const [air, setAir] = useState(bla2);
 
   useEffect(() => {
     localStorage.removeItem("airline");
@@ -59,6 +28,34 @@ function App() {
       localStorage.setItem("airline", JSON.stringify([]));
     }
   });
+
+  const departureCity = "Москва";
+  const arrivalCity = "ЛОНДОН";
+  const departureArray = [];
+  const arrivalArray = [];
+
+  data.result.flights.map((item) => {
+    return item.flight.legs.map((i) => {
+      return i.segments.map((j) => {
+        if (j.departureCity && j.departureCity.caption === departureCity)
+          departureArray.push(item);
+        return j;
+      });
+    });
+  });
+
+  departureArray.map((item) => {
+    return item.flight.legs.map((i) => {
+      return i.segments.map((j) => {
+        if (j.arrivalCity && j.arrivalCity.caption === arrivalCity)
+          arrivalArray.push(item);
+        return j;
+      });
+    });
+  });
+
+  const [initial, setInitial] = useState(arrivalArray);
+  const [air, setAir] = useState(arrivalArray);
 
   // Функция фильтрации по авиакомпаниям
   function filterAirlane(e) {
@@ -130,7 +127,7 @@ function App() {
     const priceFrom = localStorage.getItem("priceFrom");
     const priceTo = localStorage.getItem("priceTo");
 
-    const initialArray = bla2;
+    const initialArray = arrivalArray;
     const filterArrayByPrice = [];
     const filterArray = [];
 
@@ -220,145 +217,146 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <div className="sort">
-          <p className="text">Сортировать</p>
-          <div className="sort_container">
-            <input
-              type="radio"
-              checked={sortPriceIncrease || false}
-              onChange={() => {
-                setSortPriceIncrease(!sortPriceIncrease);
-                localStorage.setItem("PriceIncrease", !sortPriceIncrease);
-                setSortPriceReduction(false);
-                localStorage.setItem("PriceReduction", false);
-                setDuration(false);
-                localStorage.setItem("Duration", false);
-                filter();
-              }}
-            />
-            <label> - по возрастанию цены</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              checked={sortPriceReduction || false}
-              onChange={() => {
-                setSortPriceReduction(!sortPriceReduction);
-                localStorage.setItem("PriceReduction", !sortPriceReduction);
-                setSortPriceIncrease(false);
-                localStorage.setItem("PriceIncrease", false);
-                setDuration(false);
-                localStorage.setItem("Duration", false);
-                filter();
-              }}
-            />
-            <label> - по убыванию цены</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              checked={duration || false}
-              onChange={() => {
-                setDuration(!duration);
-                localStorage.setItem("Duration", !duration);
-                setSortPriceIncrease(false);
-                localStorage.setItem("PriceIncrease", false);
-                setSortPriceReduction(false);
-                localStorage.setItem("PriceReduction", false);
-                filter();
-              }}
-            />
-            <label> - по времени в пути</label>
-          </div>
-        </div>
-        <div className="sort">
-          <p className="text">Фильтровать</p>
-          <div className="sort_container">
-            <input
-              type="checkbox"
-              checked={oneTransfer || false}
-              onChange={() => {
-                setOneTransfer(!oneTransfer);
-                localStorage.setItem("OneTransfer", !oneTransfer);
-                setNoTransfers(false);
-                localStorage.setItem("NoTransfers", false);
-                filter();
-              }}
-            />
-            <label> - 1 пересадка</label>
-          </div>
-          <div className="sort_container">
-            <input
-              type="checkbox"
-              checked={noTransfers || false}
-              onChange={() => {
-                setNoTransfers(!noTransfers);
-                localStorage.setItem("NoTransfers", !noTransfers);
-                setOneTransfer(false);
-                localStorage.setItem("OneTransfer", false);
-                filter();
-              }}
-            />
-            <label> - без пересадок</label>
-          </div>
-        </div>
-        <div className="sort">
-          <p className="text">Цена</p>
-          <div>
-            От{" "}
-            <input
-              name="priceFrom"
-              value={priceFrom}
-              onChange={(e) => {
-                setPriceFrom(e.target.value);
-                localStorage.setItem("priceFrom", e.target.value);
-                filter();
-              }}
-            ></input>
-          </div>
-          <div>
-            До{" "}
-            <input
-              name="priceTo"
-              value={priceTo}
-              onChange={(e) => {
-                setPriceTo(e.target.value);
-                localStorage.setItem("priceTo", e.target.value);
-                filter();
-              }}
-            ></input>
-          </div>
-        </div>
-        <div className="sort">
-          <p className="text">Авиакомпании</p>
-          {filterAirlanes(bla2).map((i, index) => (
-            <div className="sort_container" key={index}>
+      <div className="container">
+        <div>
+          <div className="sort">
+            <p className="text">Сортировать</p>
+            <div className="sort_container">
               <input
-                id={index}
-                type="checkbox"
-                value={i.airline}
-                onClick={(e) => filterAirlane(e)}
-                disabled={i.disabled}
+                type="radio"
+                checked={sortPriceIncrease || false}
+                onChange={() => {
+                  setSortPriceIncrease(!sortPriceIncrease);
+                  localStorage.setItem("PriceIncrease", !sortPriceIncrease);
+                  setSortPriceReduction(false);
+                  localStorage.setItem("PriceReduction", false);
+                  setDuration(false);
+                  localStorage.setItem("Duration", false);
+                  filter();
+                }}
               />
-              <label>
-                - {i.airline} от {i.maxPrice}
-              </label>
+              <label> - по возрастанию цены</label>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        {initial.length > 0 ? (
-          <>
-            {initial.map((item, index) => (
-              <FlightСard key={index} item={item} />
+            <div>
+              <input
+                type="radio"
+                checked={sortPriceReduction || false}
+                onChange={() => {
+                  setSortPriceReduction(!sortPriceReduction);
+                  localStorage.setItem("PriceReduction", !sortPriceReduction);
+                  setSortPriceIncrease(false);
+                  localStorage.setItem("PriceIncrease", false);
+                  setDuration(false);
+                  localStorage.setItem("Duration", false);
+                  filter();
+                }}
+              />
+              <label> - по убыванию цены</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                checked={duration || false}
+                onChange={() => {
+                  setDuration(!duration);
+                  localStorage.setItem("Duration", !duration);
+                  setSortPriceIncrease(false);
+                  localStorage.setItem("PriceIncrease", false);
+                  setSortPriceReduction(false);
+                  localStorage.setItem("PriceReduction", false);
+                  filter();
+                }}
+              />
+              <label> - по времени в пути</label>
+            </div>
+          </div>
+          <div className="sort">
+            <p className="text">Фильтровать</p>
+            <div className="sort_container">
+              <input
+                type="checkbox"
+                checked={oneTransfer || false}
+                onChange={() => {
+                  setOneTransfer(!oneTransfer);
+                  localStorage.setItem("OneTransfer", !oneTransfer);
+                  setNoTransfers(false);
+                  localStorage.setItem("NoTransfers", false);
+                  filter();
+                }}
+              />
+              <label> - 1 пересадка</label>
+            </div>
+            <div className="sort_container">
+              <input
+                type="checkbox"
+                checked={noTransfers || false}
+                onChange={() => {
+                  setNoTransfers(!noTransfers);
+                  localStorage.setItem("NoTransfers", !noTransfers);
+                  setOneTransfer(false);
+                  localStorage.setItem("OneTransfer", false);
+                  filter();
+                }}
+              />
+              <label> - без пересадок</label>
+            </div>
+          </div>
+          <div className="sort sort_price">
+            <p className="text">Цена</p>
+            <div>
+              От{" "}
+              <input
+                name="priceFrom"
+                value={priceFrom}
+                onChange={(e) => {
+                  setPriceFrom(e.target.value);
+                  localStorage.setItem("priceFrom", e.target.value);
+                  filter();
+                }}
+              ></input>
+            </div>
+            <div>
+              До{" "}
+              <input
+                name="priceTo"
+                value={priceTo}
+                onChange={(e) => {
+                  setPriceTo(e.target.value);
+                  localStorage.setItem("priceTo", e.target.value);
+                  filter();
+                }}
+              ></input>
+            </div>
+          </div>
+          <div className="sort">
+            <p className="text">Авиакомпании</p>
+            {filterAirlanes(arrivalArray).map((i, index) => (
+              <div className="sort_container_price" key={index}>
+                <input
+                  id={index}
+                  type="checkbox"
+                  value={i.airline}
+                  onClick={(e) => filterAirlane(e)}
+                  disabled={i.disabled}
+                />
+                <label className="airline">{i.airline}</label>
+                <span className="airline_price"> от {i.maxPrice} р.</span>
+              </div>
             ))}
-          </>
-        ) : (
-          <p>По вашему запросу ничего не найдено</p>
-        )}
+          </div>
+        </div>
+
+        <div className="flight_container">
+          {initial.length > 0 ? (
+            <>
+              {initial.map((item, index) => (
+                <FlightСard key={index} item={item} />
+              ))}
+            </>
+          ) : (
+            <p>По вашему запросу ничего не найдено</p>
+          )}
+        </div>
       </div>
     </div>
   );
